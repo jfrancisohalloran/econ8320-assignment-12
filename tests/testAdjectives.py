@@ -1,26 +1,26 @@
 import unittest
 import json
-import pandas
-
+import pandas as pd
 
 with open("Lesson.ipynb", "r") as file:
     f_str = file.read()
 
 doc = json.loads(f_str)
 
-code = [i for i in doc['cells'] if i['cell_type']=='code']
-si = {}
-for i in code:
-    for j in i['source']:
-        if "#si-exercise" in j:
-            exec(compile("".join(i['source']), '<string>', 'exec'))
+code = [i for i in doc['cells'] if i['cell_type'] == 'code']
 
+global_namespace = {}
 
-# todo: replace this with an actual test
+for cell in code:
+    source = "".join(cell['source'])
+    if "#si-exercise" in source:
+        exec(compile(source, '<string>', 'exec'), global_namespace)
+
 class TestCase(unittest.TestCase):
 
     def testAdjectives(self):
-        #Checking adjectives list
-        df = isinstance(adjectives, pandas.core.series.Series) | isinstance(adjectives, pandas.core.frame.DataFrame)
-        length = len(adjectives)==20
-        self.assertTrue(df & length)
+        adjectives = global_namespace.get('adjectives', None)
+        self.assertIsNotNone(adjectives, "Variable 'adjectives' is not defined.")
+        df = isinstance(adjectives, pd.Series) or isinstance(adjectives, pd.DataFrame)
+        length = len(adjectives) == 20
+        self.assertTrue(df and length, "Adjectives should be a DataFrame or Series with 20 entries.")

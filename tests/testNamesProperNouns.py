@@ -2,28 +2,29 @@ import unittest
 import json
 import pandas as pd
 
-
 with open("Lesson.ipynb", "r") as file:
     f_str = file.read()
 
 doc = json.loads(f_str)
 
-code = [i for i in doc['cells'] if i['cell_type']=='code']
-si = {}
-for i in code:
-    for j in i['source']:
-        if "#si-exercise" in j:
-            exec(compile("".join(i['source']), '<string>', 'exec'))
+code = [i for i in doc['cells'] if i['cell_type'] == 'code']
 
+global_namespace = {}
 
-# todo: replace this with an actual test
+for cell in code:
+    source = "".join(cell['source'])
+    if "#si-exercise" in source:
+        exec(compile(source, '<string>', 'exec'), global_namespace)
+
 class TestCase(unittest.TestCase):
 
     def testNamesProperNouns(self):
-        #Checking names for only proper nouns
-        typelist = isinstance(names, list)
+        names = global_namespace.get('names', None)
+        self.assertIsNotNone(names, "Variable 'names' is not defined.")
+        self.assertIsInstance(names, list, "'names' should be a list.")
         test = True
         for i in names:
-            if (str(i).lower()==i) | (len(str(i).split(" "))>2):
+            if (str(i).lower() == i) or (len(str(i).split(" ")) > 2):
                 test = False
-        self.assertTrue(test)
+                break
+        self.assertTrue(test, "All names should be proper nouns (capitalized and not multi-word).")
