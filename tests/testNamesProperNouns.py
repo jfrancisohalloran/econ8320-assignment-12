@@ -15,18 +15,17 @@ for i in code:
         if "#si-exercise" in j:
             exec(compile("".join(i['source']), '<string>', 'exec'))
 
-
-# todo: replace this with an actual test
 class TestCase(unittest.TestCase):
 
     def testNamesProperNouns(self):
-        #Checking names for only proper nouns
         typelist = isinstance(names, list)
-        print(f"typelist")
-        test = True
+        print(f"typelist: {typelist}")
+        test = typelist and len(names) > 0
+
         for i in names:
             print("Checking types in 'names':")
-            print(f"{name}: {type(name)}")
-            if (str(i).lower()==i) | (len(str(i).split(" "))>2):
+            print(f"{i}: {type(i)}")
+            if str(i).lower() == i or len(str(i).split(" ")) > 2:
                 test = False
+                print(f"Invalid name found: {i}")
         self.assertTrue(test)
