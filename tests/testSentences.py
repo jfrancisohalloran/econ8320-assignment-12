@@ -2,25 +2,28 @@ import unittest
 import json
 import pandas as pd
 
+
 with open("Lesson.ipynb", "r") as file:
     f_str = file.read()
 
 doc = json.loads(f_str)
 
-code = [i for i in doc['cells'] if i['cell_type'] == 'code']
+code = [i for i in doc['cells'] if i['cell_type']=='code']
+si = {}
+for i in code:
+    for j in i['source']:
+        if "#si-exercise" in j:
+            exec(compile("".join(i['source']), '<string>', 'exec'))
 
-global_namespace = {}
 
-for cell in code:
-    source = "".join(cell['source'])
-    if "#si-exercise" in source:
-        exec(compile(source, '<string>', 'exec'), global_namespace)
-
+# todo: replace this with an actual test
 class TestCase(unittest.TestCase):
 
     def testSentences(self):
-        sentences = global_namespace.get('sentences', None)
-        self.assertIsNotNone(sentences, "Variable 'sentences' is not defined.")
-        self.assertIsInstance(sentences, int, "'sentences' should be an integer.")
-        lengthsent = -5 <= (sentences - 125) <= 5
-        self.assertTrue(lengthsent, "The number of sentences should be close to 125.")
+        # Check length of sentences count
+        typeint = isinstance(sentences, int)
+        print(f"sentences")
+        print(f"typeint")
+        lengthsent = -5<=(sentences-125)<=5
+        print(f"lengthsent")
+        self.assertTrue(typeint & lengthsent)
