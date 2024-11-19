@@ -25,7 +25,8 @@ class TestCase(unittest.TestCase):
         print(f"typelist")
         test = True
         for i in names:
-            print(i)
+            print("Checking types in 'names':")
+            print(f"{name}: {type(name)}")
             if (str(i).lower()==i) | (len(str(i).split(" "))>2):
                 test = False
         self.assertTrue(test)
